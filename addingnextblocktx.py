@@ -11,6 +11,6 @@ methodAndParams = [
         ],
     ]
 ]
-
-answer = instruct_wallet(methodAndParams[0][0], methodAndParams[0][1])
-print(answer)
+for pair in methodAndParams:
+    answer = instruct_wallet(pair[0], pair[1])
+    print(answer)
