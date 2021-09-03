@@ -14,21 +14,6 @@ methodAndParams = [
     ],
     ['getnewaddress', 
         []
-    ],
-    ['generatetoaddress', 
-        [1]
-    ],
-    ['generateblock', 
-        []
-    ],
-    ['createrawtransaction', 
-        [
-            [{"txid":"bf0a1ff2bd50bc02d391c25ccd3cba7458032ddbf45a9ced1375d2b9e5b82bfa", "vout":0}], 
-            [{"data":"00010203"},{"bcrt1q0n6gls7nt336nu2y7negu3fy9c2qqkfd560eh7":"1"}]
-        ]
-    ],
-    ['signrawtransactionwithwallet', 
-        []
     ]
 ]
 
@@ -39,24 +24,24 @@ for i in range(0,4):
     if(i == 3):
         address = ret['result']
 
-methodAndParams[4][1].append(address)
-ret = instruct_wallet(methodAndParams[4][0], methodAndParams[4][1])
+ret = instruct_wallet("generatetoaddress", [101, address])
+firstBlockHash = ret['result'][0]
 print(ret)
 
-methodAndParams[5][1].append(address)
-methodAndParams[5][1].append([])
-ret = instruct_wallet(methodAndParams[5][0], methodAndParams[5][1])
+ret = instruct_wallet('getblock', [firstBlockHash])
+txHex = ret['result']['tx'][0]
 print(ret)
 
+ret = instruct_wallet('createrawtransaction', [
+    [{"txid":txHex, "vout":0}], 
+    [{"data":"00010203"},{address:"0.01"}]
+])
+txHex = ret['result']
+print(ret)
 
-""" rawtx = instruct_wallet(methodAndParams[0][0], methodAndParams[0][1])
-print(rawtx)
+ret = instruct_wallet('signrawtransactionwithwallet', [txHex])
+signedTx = ret['result']['hex']
+print(ret)
 
-loadressult = instruct_wallet(methodAndParams[1][0], methodAndParams[1][1])
-print(loadressult)
-
-loadressult = instruct_wallet(methodAndParams[2][0], methodAndParams[2][1])
-print(loadressult)
-
-signedtx = instruct_wallet(methodAndParams[3][0], [rawtx['result']])
-print(signedtx) """
+ret = instruct_wallet('generateblock', [address, [signedTx]])
+print(ret)
