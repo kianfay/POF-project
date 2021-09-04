@@ -1,5 +1,8 @@
-from sendingrawtx import instruct_wallet
+from bitcoinCliUtil import instruct_wallet
+from bitcoinCliUtil import addCustomTxAndReadIt
+import hashlib
 import json
+
 
 
 methodAndParams = [
@@ -24,40 +27,24 @@ for i in range(0,4):
     if(i == 3):
         address = ret['result']
 
-method = 'generatetoaddress';
-ret = instruct_wallet(method, [101, address])
+method = 'generatetoaddress'
+ret = instruct_wallet(method, [102, address])
 firstBlockHash = ret['result'][0]
+secondBlockHash = ret['result'][1]
 print(str(method),':\n', ret,'\n')
 
-method = 'getblock';
-ret = instruct_wallet(method, [firstBlockHash])
-txHex = ret['result']['tx'][0]
-print(str(method),':\n', ret,'\n')
+""" "gen".toAscii() = 67656e """
+signedTx = addCustomTxAndReadIt(firstBlockHash, address, "67656e")
 
-method = 'createrawtransaction';
-ret = instruct_wallet(method, [
-    [{"txid":txHex, "vout":0}], 
-    [{"data":"00010203"},{address:"0.01"}]
-])
-txHex = ret['result']
-print(str(method),':\n', ret,'\n')
 
-method = 'signrawtransactionwithwallet';
-ret = instruct_wallet(method, [txHex])
-signedTx = ret['result']['hex']
-print(str(method),':\n', ret,'\n')
+""""""
+""" 
+Adding the hash from the genesis tx to the next tx.
+Using secondBlockHash now  to get a new coinbase tx.
+"""
+""""""
 
-method = 'generateblock'
-ret = instruct_wallet(method, [address, [signedTx]])
-newBlockAddr = ret['result']['hash']
-print(method,':\n', ret,'\n')
+hashedTx = hashlib.sha256(bytes(signedTx, 'utf-8')).hexdigest()
+print('\n\n', 'Hashed tx: ', hashedTx, '\n')
 
-method = 'getblock'
-ret = instruct_wallet(method, [newBlockAddr])
-newTxHex = ret['result']['tx'][1]
-print(method,':\n', ret,'\n')
-
-method = 'getrawtransaction'
-ret = instruct_wallet(method, [newTxHex, True, newBlockAddr])
-txHex = ret['result']
-print(method,':\n', ret,'\n')
+signedTx = addCustomTxAndReadIt(secondBlockHash, address, hashedTx)
