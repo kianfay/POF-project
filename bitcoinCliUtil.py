@@ -18,27 +18,30 @@ def instruct_wallet(method, params):
 """ answer = instruct_wallet("getblockhash", [2])
 print(answer) """
 
-def addCustomTxAndReadIt(blockWithCoinbase, address, customData):
-    method = 'getblock';
-    ret = instruct_wallet(method, [blockWithCoinbase])
-    txHex = ret['result']['tx'][0]
-    print(str(method),':\n', ret,'\n')
+def addCustomTxsAndReadIt(blocksWithCoinbase, address, customData):
+    
+    signedTxs = []
+    for block in blocksWithCoinbase:
+        method = 'getblock';
+        ret = instruct_wallet(method, [block])
+        txHex = ret['result']['tx'][0]
+        print(str(method),':\n', ret,'\n')
 
-    method = 'createrawtransaction';
-    ret = instruct_wallet(method, [
-        [{"txid":txHex, "vout":0}], 
-        [{"data":customData},{address:"0.01"}]
-    ])
-    txHex = ret['result']
-    print(str(method),':\n', ret,'\n')
+        method = 'createrawtransaction';
+        ret = instruct_wallet(method, [
+            [{"txid":txHex, "vout":0}], 
+            [{"data":customData},{address:"0.01"}]
+        ])
+        txHex = ret['result']
+        print(str(method),':\n', ret,'\n')
 
-    method = 'signrawtransactionwithwallet';
-    ret = instruct_wallet(method, [txHex])
-    signedTx = ret['result']['hex']
-    print(str(method),':\n', ret,'\n')
+        method = 'signrawtransactionwithwallet';
+        ret = instruct_wallet(method, [txHex])
+        signedTxs.append(ret['result']['hex'])
+        print(str(method),':\n', ret,'\n')
 
     method = 'generateblock'
-    ret = instruct_wallet(method, [address, [signedTx]])
+    ret = instruct_wallet(method, [address, signedTxs])
     newBlockAddr = ret['result']['hash']
     print(method,':\n', ret,'\n')
 
@@ -52,4 +55,4 @@ def addCustomTxAndReadIt(blockWithCoinbase, address, customData):
     txHex = ret['result']
     print(method,':\n', ret,'\n')
 
-    return signedTx
+    return signedTxs
