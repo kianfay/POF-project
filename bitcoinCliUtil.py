@@ -3,6 +3,15 @@
 import json
 import requests    
 
+""""""""""""
+"""
+Makes a bitcoin-cli request using the RPC service
+
+Parameters:
+    - method    - the bitcoin-cli method to use
+    - params    - the parameters to pass, in an array
+"""
+""""""""""""
 def instruct_wallet(method, params):
     url = "http://127.0.0.1:18443/"
     payload = json.dumps({"jsonrpc": "1.0", "id": "curltest", "method": method, "params": params})
@@ -15,9 +24,18 @@ def instruct_wallet(method, params):
     except:
         print('No response from Wallet, check Bitcoin is running on this machine')
 
-""" answer = instruct_wallet("getblockhash", [2])
-print(answer) """
 
+
+""""""""""""
+"""
+Adds proof of flow transactions to a block
+
+Parameters:
+    - blocksWithCoinbase    - an array of blocks from which to take the coinbase to make a new tx
+    - address               - the address to send the new coinbase to
+    - customData            - the gen string or for non-first txs, the hash of the previous txs
+"""
+""""""""""""
 def addCustomTxsAndReadIt(blocksWithCoinbase, address, customData):
     
     signedTxs = []
