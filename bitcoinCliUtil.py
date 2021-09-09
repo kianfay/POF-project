@@ -74,3 +74,24 @@ def addCustomTxsAndReadIt(blocksWithCoinbase, address, customData):
     print(method,':\n', ret,'\n')
 
     return signedTxs
+
+def returnNonCoinbaseTxs(blockHeight):
+    method = 'getblockhash'
+    ret = instruct_wallet(method, [blockHeight])
+    blockHash = ret['result']
+    print(method,':\n', ret,'\n')
+
+    method = 'getblock'
+    ret = instruct_wallet(method, [blockHash])
+    returnedTxs = ret['result']['tx']
+    print(method,':\n', ret,'\n')
+
+    if len(returnedTxs) < 2:
+        print("This block only has a coinbase tx")
+        return
+    
+    returnedTxs = returnedTxs[1:]
+    return returnedTxs
+
+
+print(returnNonCoinbaseTxs(1352))
