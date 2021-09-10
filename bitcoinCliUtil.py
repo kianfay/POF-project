@@ -13,11 +13,11 @@ Parameters:
 """
 """"""""""""
 def instruct_wallet(method, params):
-    url = "http://127.0.0.1:18443/"
-    payload = json.dumps({"jsonrpc": "1.0", "id": "curltest", "method": method, "params": params})
-    headers = {'content-type': "text/plain"}
+    url = 'http://127.0.0.1:18443/'
+    payload = json.dumps({'jsonrpc': '1.0', 'id': 'curltest', 'method': method, 'params': params})
+    headers = {'content-type': 'text/plain'}
     try:
-        response = requests.request("POST", url, data=payload, headers=headers, auth=("USERNAME", "PASSWORD"))
+        response = requests.request('POST', url, data=payload, headers=headers, auth=('USERNAME', 'PASSWORD'))
         return json.loads(response.text)
     except requests.exceptions.RequestException as e:
         print(e)
@@ -75,11 +75,24 @@ def addCustomTxsAndReadIt(blocksWithCoinbase, address, customData):
 
     return signedTxs
 
+""""""""""""
+"""
+Returns the noncoinbase txs with the blockhash of the containing block
+e.g. {"txids": ["txid1", "txid2"], "blockhash": "hash"}
+
+Parameters:
+    - blockHeight
+"""
+""""""""""""
 def returnNonCoinbaseTxs(blockHeight):
     method = 'getblockhash'
     ret = instruct_wallet(method, [blockHeight])
     blockHash = ret['result']
     print(method,':\n', ret,'\n')
+
+    if(ret['error'] != None):
+        print('Height passed to the function returnNonCoinbaseTxs is out of range...')
+        return
 
     method = 'getblock'
     ret = instruct_wallet(method, [blockHash])
@@ -87,11 +100,25 @@ def returnNonCoinbaseTxs(blockHeight):
     print(method,':\n', ret,'\n')
 
     if len(returnedTxs) < 2:
-        print("This block only has a coinbase tx")
+        print('This block only has a coinbase tx')
         return
     
     returnedTxs = returnedTxs[1:]
-    return returnedTxs
+    return  {
+                'txids': returnedTxs, 
+                'blockhash': blockHash
+            }
 
+def getHeightOfBlockchain():
+    method = 'getbestblockhash'
+    ret = instruct_wallet(method, [])
+    bestBlockHash = ret['result']
+    print(method,':\n', ret,'\n')
 
-print(returnNonCoinbaseTxs(1352))
+    method = 'getblock'
+    ret = instruct_wallet(method, [bestBlockHash])
+    heightOfBestBlock = ret['result']['height']
+    print(method,':\n', ret,'\n')
+    
+    return heightOfBestBlock
+

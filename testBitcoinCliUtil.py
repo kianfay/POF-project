@@ -74,14 +74,14 @@ def runCustomChain(punchcard):
     numberOfBlocks = len(punchcard)
     for numberOfTxs in punchcard[1:numberOfBlocks]:
         print('\n\n', 'Plain txs: ', str(signedTxs), '\n')
-        hashedTx = hashlib.sha256(bytes(str(signedTxs), 'utf-8')).hexdigest()
+        hashedTxs = hashlib.sha256(bytes(str(signedTxs), 'utf-8')).hexdigest()
 
-        print('\n\n', 'Hashed txs: ', hashedTx, '\n')
+        print('\n\n', 'Hashed txs: ', hashedTxs, '\n')
 
         listOfBlocks = blockHashes[currentTx : currentTx + numberOfTxs]
         currentTx = currentTx + numberOfTxs
 
-        signedTx = addCustomTxsAndReadIt(listOfBlocks, address, hashedTx)
+        signedTx = addCustomTxsAndReadIt(listOfBlocks, address, hashedTxs)
 
 
 runCustomChain([2,2])
