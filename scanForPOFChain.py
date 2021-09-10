@@ -3,6 +3,8 @@ from bitcoinCliUtil import returnNonCoinbaseTxs
 from bitcoinCliUtil import getHeightOfBlockchain
 import hashlib
 
+GENESIS_STRING = "67656e"
+
 """"""""""""
 """
 Scans the blockchain from a given start block which needs to contain the
@@ -50,7 +52,7 @@ def scanChain(startBlock):
         rawTxOutputs = ret['result']['vout'][0]
         print(method,':\n', ret,'\n')
 
-        if("67656e" in rawTxOutputs['scriptPubKey']['hex']):
+        if(GENESIS_STRING in rawTxOutputs['scriptPubKey']['hex']):
             genFound = True
             countTxs = countTxs + 1
             rawTxs.append(ret['result']['hex'])
@@ -74,9 +76,39 @@ def scanChain(startBlock):
         more runtime to search all block in range [startBlock + 1, heightOfBestBlock]
     """
     """"""
+    rawTxs = []
+    nextPOFBlockFound = False
+    countTxs = 0
     for blockIndex in range(startBlock + 1, heightOfBlockchain + 1):
         nonCoinbaseTxs = returnNonCoinbaseTxs(blockIndex)
+        if(nonCoinbaseTxs == False):
+            print("br1")
+            break
         
+        for tx in nonCoinbaseTxs['txids']:
+            method = 'getrawtransaction'
+            ret = instruct_wallet(method, [tx, True, nonCoinbaseTxs['blockhash']])
+            rawTxOutputs = ret['result']['vout'][0]
+            print(method,':\n', ret,'\n')
+
+            if(hashedTxs in rawTxOutputs['scriptPubKey']['hex']):
+                nextPOFBlockFound = True
+                countTxs = countTxs + 1
+                rawTxs.append(ret['result']['hex'])
+        
+        if(nextPOFBlockFound == False):
+            print("br2")
+            break
+        
+        hashedTxs = hashlib.sha256(bytes(str(rawTxs), 'utf-8')).hexdigest()
+        print(hashedTxs)
+
+        txCountTrack.append(countTxs)
+        """ Reset the list and boolean for another iteration"""
+        rawTxs = []
+        nextPOFBlockFound = False
+    
+    print("The resultant punchcard: ", str(txCountTrack))
 
 
 
@@ -84,4 +116,4 @@ def scanChain(startBlock):
         - 1665/1667 should failure
         - 1666 should pass
 """
-scanChain(1666)
+scanChain(1891)

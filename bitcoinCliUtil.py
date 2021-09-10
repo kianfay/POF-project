@@ -42,36 +42,37 @@ def addCustomTxsAndReadIt(blocksWithCoinbase, address, customData):
     for block in blocksWithCoinbase:
         method = 'getblock';
         ret = instruct_wallet(method, [block])
-        txHex = ret['result']['tx'][0]
         print(str(method),':\n', ret,'\n')
+        txHex = ret['result']['tx'][0]
 
         method = 'createrawtransaction';
         ret = instruct_wallet(method, [
             [{"txid":txHex, "vout":0}], 
             [{"data":customData},{address:"0.01"}]
         ])
-        txHex = ret['result']
         print(str(method),':\n', ret,'\n')
+        txHex = ret['result']
+        
 
         method = 'signrawtransactionwithwallet';
         ret = instruct_wallet(method, [txHex])
-        signedTxs.append(ret['result']['hex'])
         print(str(method),':\n', ret,'\n')
+        signedTxs.append(ret['result']['hex'])
 
     method = 'generateblock'
     ret = instruct_wallet(method, [address, signedTxs])
-    newBlockAddr = ret['result']['hash']
     print(method,':\n', ret,'\n')
+    newBlockAddr = ret['result']['hash']
 
     method = 'getblock'
     ret = instruct_wallet(method, [newBlockAddr])
-    newTxHex = ret['result']['tx'][1]
     print(method,':\n', ret,'\n')
+    newTxHex = ret['result']['tx'][1]
 
     method = 'getrawtransaction'
     ret = instruct_wallet(method, [newTxHex, True, newBlockAddr])
-    txHex = ret['result']
     print(method,':\n', ret,'\n')
+    txHex = ret['result']
 
     return signedTxs
 
@@ -87,8 +88,8 @@ Parameters:
 def returnNonCoinbaseTxs(blockHeight):
     method = 'getblockhash'
     ret = instruct_wallet(method, [blockHeight])
-    blockHash = ret['result']
     print(method,':\n', ret,'\n')
+    blockHash = ret['result']
 
     if(ret['error'] != None):
         print('Height passed to the function returnNonCoinbaseTxs is out of range...')
@@ -96,12 +97,12 @@ def returnNonCoinbaseTxs(blockHeight):
 
     method = 'getblock'
     ret = instruct_wallet(method, [blockHash])
-    returnedTxs = ret['result']['tx']
     print(method,':\n', ret,'\n')
+    returnedTxs = ret['result']['tx']
 
     if len(returnedTxs) < 2:
         print('This block only has a coinbase tx')
-        return
+        return False
     
     returnedTxs = returnedTxs[1:]
     return  {
@@ -112,13 +113,13 @@ def returnNonCoinbaseTxs(blockHeight):
 def getHeightOfBlockchain():
     method = 'getbestblockhash'
     ret = instruct_wallet(method, [])
-    bestBlockHash = ret['result']
     print(method,':\n', ret,'\n')
+    bestBlockHash = ret['result']
 
     method = 'getblock'
     ret = instruct_wallet(method, [bestBlockHash])
-    heightOfBestBlock = ret['result']['height']
     print(method,':\n', ret,'\n')
+    heightOfBestBlock = ret['result']['height']
     
     return heightOfBestBlock
 

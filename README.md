@@ -5,4 +5,4 @@ the most relevant next link in the chain.
 
 Usage:
 - Start an instance of bitcoind running in regtest mode on your local machine
-- Run the program using python3 (e.g. python3 addingnextblocktx.py)
+- Run the program using python3 (e.g. python3 runtests.py)

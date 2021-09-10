@@ -84,4 +84,4 @@ def runCustomChain(punchcard):
         signedTx = addCustomTxsAndReadIt(listOfBlocks, address, hashedTxs)
 
 
-runCustomChain([2,2])
+runCustomChain([3,2,2,4,5])
