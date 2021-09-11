@@ -44,6 +44,7 @@ def scanForPOFChain(startBlock):
     rawTxs = []
     genFound = False
     countTxs = 0
+    vote = None
 
     for tx in possibleGenesisTxs['txids']:
         method = 'getrawtransaction'
@@ -52,16 +53,18 @@ def scanForPOFChain(startBlock):
         rawTxOutputs = ret['result']['vout'][0]
         print(method,':\n', ret,'\n')
 
-        if(GENESIS_STRING in rawTxOutputs['scriptPubKey']['hex']):
+        customTxOutput = rawTxOutputs['scriptPubKey']['hex']
+        if(GENESIS_STRING in customTxOutput):
             genFound = True
             countTxs = countTxs + 1
             rawTxs.append(ret['result']['hex'])
+            vote = customTxOutput[4:6]
 
     if(genFound == False):
         print('No genesis tx found')
         return
     
-    txCountTrack.append(countTxs)
+    txCountTrack.append([countTxs, vote])
 
     """ Hash the gen txs"""
     hashedTxs = hashlib.sha256(bytes(str(rawTxs), 'utf-8')).hexdigest()
@@ -79,6 +82,8 @@ def scanForPOFChain(startBlock):
     rawTxs = []
     nextPOFBlockFound = False
     countTxs = 0
+    vote = None
+
     for blockIndex in range(startBlock + 1, heightOfBlockchain + 1):
         nonCoinbaseTxs = returnNonCoinbaseTxs(blockIndex)
         if(nonCoinbaseTxs == False):
@@ -91,10 +96,12 @@ def scanForPOFChain(startBlock):
             rawTxOutputs = ret['result']['vout'][0]
             print(method,':\n', ret,'\n')
 
-            if(hashedTxs in rawTxOutputs['scriptPubKey']['hex']):
+            customTxOutput = rawTxOutputs['scriptPubKey']['hex']
+            if(hashedTxs in customTxOutput):
                 nextPOFBlockFound = True
                 countTxs = countTxs + 1
                 rawTxs.append(ret['result']['hex'])
+                vote = customTxOutput[4:6]
         
         if(nextPOFBlockFound == False):
             print("br2")
@@ -103,10 +110,11 @@ def scanForPOFChain(startBlock):
         hashedTxs = hashlib.sha256(bytes(str(rawTxs), 'utf-8')).hexdigest()
         print(hashedTxs)
 
-        txCountTrack.append(countTxs)
-        """ Reset the list and boolean for another iteration"""
+        txCountTrack.append([countTxs, vote])
+        """ Reset the per loop variables"""
         rawTxs = []
         nextPOFBlockFound = False
         countTxs = 0
+        vote = None
     
     print("The resultant punchcard: ", str(txCountTrack))
