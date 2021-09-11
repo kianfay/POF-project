@@ -1,5 +1,5 @@
-from bitcoinCliUtil import instruct_wallet
-from bitcoinCliUtil import addCustomTxsAndReadIt
+from src.bitcoinCliUtil import instruct_wallet
+from src.bitcoinCliUtil import addCustomTxsAndReadIt
 import hashlib
 import functools
 import json
@@ -81,7 +81,7 @@ def runCustomChain(punchcard):
         listOfBlocks = blockHashes[currentTx : currentTx + numberOfTxs]
         currentTx = currentTx + numberOfTxs
 
-        signedTx = addCustomTxsAndReadIt(listOfBlocks, address, hashedTxs)
+        signedTxs = addCustomTxsAndReadIt(listOfBlocks, address, hashedTxs)
 
 
 runCustomChain([3,2,2,4,5])

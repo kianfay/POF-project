@@ -107,6 +107,7 @@ def scanChain(startBlock):
         """ Reset the list and boolean for another iteration"""
         rawTxs = []
         nextPOFBlockFound = False
+        countTxs = 0
     
     print("The resultant punchcard: ", str(txCountTrack))
 
@@ -116,4 +117,4 @@ def scanChain(startBlock):
         - 1665/1667 should failure
         - 1666 should pass
 """
-scanChain(1891)
+scanChain(359)
