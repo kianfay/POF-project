@@ -110,6 +110,8 @@ def returnNonCoinbaseTxs(blockHeight):
                 'blockhash': blockHash
             }
 
+
+
 def getHeightOfBlockchain():
     method = 'getbestblockhash'
     ret = instruct_wallet(method, [])

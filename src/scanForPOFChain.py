@@ -15,7 +15,7 @@ Parameters:
     - startBlock    - the genesis tx's block 
 """
 """"""""""""
-def scanChain(startBlock):
+def scanForPOFChain(startBlock):
     """"""
     """
     Get the height of the blockchain and scan the block at the height - startBlock
