@@ -1,6 +1,6 @@
-from bitcoinCliUtil import instruct_wallet
-from bitcoinCliUtil import returnNonCoinbaseTxs 
-from bitcoinCliUtil import getHeightOfBlockchain
+from src.bitcoinCliUtil import instruct_wallet
+from src.bitcoinCliUtil import returnNonCoinbaseTxs 
+from src.bitcoinCliUtil import getHeightOfBlockchain
 import hashlib
 
 GENESIS_STRING = "67656e"
@@ -110,11 +110,3 @@ def scanChain(startBlock):
         countTxs = 0
     
     print("The resultant punchcard: ", str(txCountTrack))
-
-
-
-""" Just for testing: 
-        - 1665/1667 should failure
-        - 1666 should pass
-"""
-scanChain(359)
