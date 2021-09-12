@@ -5,4 +5,7 @@ the most relevant next link in the chain.
 
 Usage:
 - Start an instance of bitcoind running in regtest mode on your local machine
-- Run the program using python3 (e.g. python3 testRunCustomChain.py)
+- Run a sample flow using python3, with the votes passed as parameters in the test file: `python3 testRunCustomChain.py`
+- Scan the Proof Of Flow chain that was just created using with a group of candidates : `python3 testScanForPOFChain.py`
+- Tally the votes : `python3 testTallyVotes.py`
+
