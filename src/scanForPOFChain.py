@@ -87,7 +87,6 @@ def scanForPOFChain(startBlock):
     for blockIndex in range(startBlock + 1, heightOfBlockchain + 1):
         nonCoinbaseTxs = returnNonCoinbaseTxs(blockIndex)
         if(nonCoinbaseTxs == False):
-            print("br1")
             break
         
         for tx in nonCoinbaseTxs['txids']:
@@ -104,7 +103,6 @@ def scanForPOFChain(startBlock):
                 vote = customTxOutput[4:6]
         
         if(nextPOFBlockFound == False):
-            print("br2")
             break
         
         hashedTxs = hashlib.sha256(bytes(str(rawTxs), 'utf-8')).hexdigest()
@@ -118,3 +116,4 @@ def scanForPOFChain(startBlock):
         vote = None
     
     print("The resultant punchcard: ", str(txCountTrack))
+    return txCountTrack
